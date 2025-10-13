@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "netcores": {
+      "command": "netcores-mcp",
+      "env": {
+        "NETCORES_API_URL": "http://localhost:8889"
+      }
+    }
+  }
+}

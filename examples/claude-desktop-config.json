@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "netcores": {
+      "command": "netcores-mcp"
+    }
+  }
+}

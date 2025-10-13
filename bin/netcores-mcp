@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+/**
+ * NetCores MCP CLI Entry Point
+ * Global executable for the NetCores MCP package
+ */
+
+// Import and run the main function
+const { main } = require('../src/server.js');
+
+main().catch((error) => {
+  console.error('Unhandled error:', error);
+  process.exit(1);
+});

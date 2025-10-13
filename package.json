@@ -1,0 +1,83 @@
+{
+  "name": "netcores-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for NetCores network k-core analysis - connect LLMs to ASN relationship data",
+  "main": "src/server.js",
+  "bin": {
+    "netcores-mcp": "./bin/netcores-mcp"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node tests/run-all.js --unit-only",
+    "test:all": "node tests/run-all.js",
+    "test:unit": "node tests/run-all.js --unit-only",
+    "test:integration": "node tests/integration/api.test.js",
+    "test:e2e": "node tests/e2e/mcp.test.js",
+    "test:api": "node src/test.js --test",
+    "test:mcp": "node src/test.js --test-all",
+    "lint": "echo 'Linting not configured yet'",
+    "setup": "node src/setup.js",
+    "build": "npm pack",
+    "prepublishOnly": "npm run test:unit && npm run test:api"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "llm",
+    "netcores",
+    "network-analysis",
+    "asn",
+    "bgp",
+    "internet-topology",
+    "k-core",
+    "caida"
+  ],
+  "author": {
+    "name": "Esteban Carisimo",
+    "email": "@estcarisimo",
+    "url": "https://netcores.fi.uba.ar"
+  },
+  "license": "MIT",
+  "homepage": "https://netcores.fi.uba.ar/mcp-docs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/estcarisimo/netcores-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/estcarisimo/netcores-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.6.0",
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "inquirer": "^8.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "src/**/*",
+    "bin/**/*",
+    "examples/**/*",
+    "README.md",
+    "LICENSE",
+    "CLAUDE.md"
+  ],
+  "preferGlobal": true,
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}

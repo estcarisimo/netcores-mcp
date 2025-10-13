@@ -1,0 +1,72 @@
+# Development files
+.github/
+tests/
+docs/
+coverage/
+.nyc_output
+
+# Test files
+*.test.js
+*.spec.js
+test/
+__tests__/
+
+# Configuration files
+.gitignore
+.eslintrc*
+.prettierrc*
+tsconfig.json
+jest.config.js
+
+# Documentation (not needed in package)
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Development dependencies
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build artifacts not needed in package
+*.tgz
+build/
+dist/
+
+# Environment files
+.env*
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Package manager files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Example and demo files (keep only essential examples)
+examples/usage-examples.md
+
+# Development scripts
+scripts/
