@@ -2,9 +2,6 @@
 .claude
 CLAUDE.md
 
-# Node.js
-package-lock.json
-
 # Dependencies
 node_modules/
 npm-debug.log*

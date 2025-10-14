@@ -14,18 +14,21 @@
 # Ubuntu: curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt-get install -y nodejs
 ```
 
-#### "EACCES: permission denied"
+#### "EACCES: permission denied" or "EPERM: operation not permitted"
 **Cause**: npm permission issues
 **Solution**:
 ```bash
-# Fix npm permissions
+# Option 1: Fix npm permissions (recommended)
 mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
 echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 
 # Then reinstall
-npm install -g netcores-mcp
+npm install -g https://github.com/estcarisimo/netcores-mcp.git
+
+# Option 2: Use sudo (not recommended, but works)
+sudo npm install -g https://github.com/estcarisimo/netcores-mcp.git
 ```
 
 #### "Cannot find module"
@@ -49,6 +52,28 @@ which netcores-mcp
 # Add npm global bin to PATH if needed
 echo 'export PATH=$(npm config get prefix)/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
+```
+
+#### Setup can't find NetCores MCP installation
+**Cause**: Non-standard npm installation or PATH issues
+**Solution**:
+```bash
+# 1. Verify installation
+npm list -g netcores-mcp
+
+# 2. Find where npm installs global packages
+npm root -g
+npm bin -g
+
+# 3. Check if netcores-mcp is in PATH
+which netcores-mcp  # Unix/macOS
+where netcores-mcp  # Windows
+
+# 4. If not in PATH, add it:
+export PATH="$(npm bin -g):$PATH"
+
+# 5. Run setup again
+netcores-mcp --setup
 ```
 
 ### Claude Desktop Integration Issues

@@ -50,19 +50,112 @@ class SetupUtility {
   }
 
   getNetCoresMCPPath() {
+    console.log(chalk.blue('🔍 Locating NetCores MCP installation...\n'));
+    
+    // Method 1: Check if netcores-mcp is in PATH and get its location
     try {
-      // Try to get the global installation path
-      const npmRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
-      const globalPath = path.join(npmRoot, 'netcores-mcp', 'bin', 'netcores-mcp');
+      const whichCmd = process.platform === 'win32' ? 'where' : 'which';
+      const cmdPath = execSync(`${whichCmd} netcores-mcp`, { encoding: 'utf8' }).trim().split('\n')[0];
       
-      if (fs.existsSync(globalPath)) {
-        return globalPath;
+      if (cmdPath && fs.existsSync(cmdPath)) {
+        // On Windows, 'where' might return a .cmd file, we need the actual script
+        if (process.platform === 'win32' && cmdPath.endsWith('.cmd')) {
+          // Read the .cmd file to find the actual node script location
+          try {
+            const cmdContent = fs.readFileSync(cmdPath, 'utf8');
+            const nodeMatch = cmdContent.match(/node\s+"([^"]+)"/);
+            if (nodeMatch && nodeMatch[1]) {
+              const actualPath = nodeMatch[1].replace(/\\/g, '/');
+              if (fs.existsSync(actualPath)) {
+                console.log(chalk.green(`✓ Found netcores-mcp at: ${actualPath}`));
+                return actualPath;
+              }
+            }
+          } catch (e) {
+            // Continue to use cmdPath if we can't parse it
+          }
+        }
+        console.log(chalk.green(`✓ Found netcores-mcp at: ${cmdPath}`));
+        return cmdPath;
       }
     } catch (error) {
-      // Fallback to simple command if global path detection fails
+      // Command not in PATH, continue to next method
     }
+
+    // Method 2: Check npm global installation paths
+    try {
+      const npmRoot = execSync('npm root -g', { encoding: 'utf8' }).trim();
+      const npmBin = execSync('npm bin -g', { encoding: 'utf8' }).trim();
+      
+      const possiblePaths = [
+        path.join(npmRoot, 'netcores-mcp', 'bin', 'netcores-mcp'),
+        path.join(npmRoot, '.bin', 'netcores-mcp'),
+        path.join(npmBin, 'netcores-mcp'),
+        path.join(npmRoot, '..', '.bin', 'netcores-mcp'),
+        // Windows specific paths
+        path.join(npmRoot, 'netcores-mcp', 'bin', 'netcores-mcp.cmd'),
+        path.join(npmBin, 'netcores-mcp.cmd')
+      ];
+      
+      for (let checkPath of possiblePaths) {
+        // Normalize path for cross-platform compatibility
+        checkPath = checkPath.replace(/\\/g, '/');
+        
+        if (fs.existsSync(checkPath)) {
+          console.log(chalk.green(`✓ Found netcores-mcp at: ${checkPath}`));
+          return checkPath;
+        }
+      }
+    } catch (error) {
+      console.log(chalk.yellow('⚠️  Could not determine npm global paths'));
+    }
+
+    // Method 3: Check common installation locations
+    const homeDir = os.homedir();
+    const commonPaths = [
+      // Unix-like systems
+      '/usr/local/lib/node_modules/netcores-mcp/bin/netcores-mcp',
+      '/usr/lib/node_modules/netcores-mcp/bin/netcores-mcp',
+      path.join(homeDir, '.npm-global', 'lib', 'node_modules', 'netcores-mcp', 'bin', 'netcores-mcp'),
+      path.join(homeDir, '.nvm', 'versions', 'node', '*', 'lib', 'node_modules', 'netcores-mcp', 'bin', 'netcores-mcp'),
+      // Windows
+      'C:\\Program Files\\nodejs\\node_modules\\netcores-mcp\\bin\\netcores-mcp',
+      'C:\\Program Files (x86)\\nodejs\\node_modules\\netcores-mcp\\bin\\netcores-mcp',
+      path.join(process.env.APPDATA || '', 'npm', 'node_modules', 'netcores-mcp', 'bin', 'netcores-mcp')
+    ];
+
+    for (let checkPath of commonPaths) {
+      // Handle glob patterns
+      if (checkPath.includes('*')) {
+        try {
+          const glob = require('glob');
+          const matches = glob.sync(checkPath);
+          if (matches.length > 0) {
+            console.log(chalk.green(`✓ Found netcores-mcp at: ${matches[0]}`));
+            return matches[0];
+          }
+        } catch (e) {
+          // glob not available, skip
+        }
+      } else {
+        checkPath = checkPath.replace(/\\/g, '/');
+        if (fs.existsSync(checkPath)) {
+          console.log(chalk.green(`✓ Found netcores-mcp at: ${checkPath}`));
+          return checkPath;
+        }
+      }
+    }
+
+    // If we get here, installation was not found
+    console.log(chalk.red.bold('❌ Could not find NetCores MCP installation.\n'));
+    console.log(chalk.yellow('Please install it first with:'));
+    console.log(chalk.white('  npm install -g https://github.com/estcarisimo/netcores-mcp.git\n'));
+    console.log(chalk.yellow('Locations checked:'));
+    console.log(chalk.gray('  - PATH environment variable'));
+    console.log(chalk.gray('  - npm global modules directory'));
+    console.log(chalk.gray('  - Common system locations\n'));
     
-    return 'netcores-mcp';
+    throw new Error('NetCores MCP not found. Please install it globally first.');
   }
 
   loadConfig(configPath) {
@@ -85,11 +178,66 @@ class SetupUtility {
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   }
 
+  async verifyInstallation(mcpPath) {
+    console.log(chalk.blue('\n🔍 Verifying NetCores MCP installation...'));
+    
+    try {
+      // Check if the file exists
+      if (!fs.existsSync(mcpPath)) {
+        throw new Error(`Installation not found at: ${mcpPath}`);
+      }
+      
+      // Check if it's executable (on Unix-like systems)
+      if (process.platform !== 'win32') {
+        try {
+          fs.accessSync(mcpPath, fs.constants.X_OK);
+        } catch (error) {
+          console.log(chalk.yellow('⚠️  File is not executable. Attempting to fix...'));
+          try {
+            fs.chmodSync(mcpPath, '755');
+            console.log(chalk.green('✓ Made file executable'));
+          } catch (chmodError) {
+            console.log(chalk.red('❌ Could not make file executable'));
+          }
+        }
+      }
+      
+      // Try to run a simple command to verify it works
+      try {
+        const testCmd = `"${mcpPath}" --version`;
+        const result = execSync(testCmd, { encoding: 'utf8' }).trim();
+        console.log(chalk.green(`✓ Installation verified: ${result}`));
+        return true;
+      } catch (error) {
+        console.log(chalk.yellow('⚠️  Could not run version check, but file exists'));
+        return true; // File exists, might still work
+      }
+    } catch (error) {
+      console.log(chalk.red(`❌ Installation verification failed: ${error.message}`));
+      return false;
+    }
+  }
+
   async setupClaudeDesktop() {
     console.log(chalk.blue.bold('🔧 NetCores MCP Setup for Claude Desktop\n'));
 
-    // Check if package is installed
-    const mcpCommand = this.getNetCoresMCPPath();
+    // Check if package is installed and get its path
+    let mcpCommand;
+    try {
+      mcpCommand = this.getNetCoresMCPPath();
+    } catch (error) {
+      console.log(chalk.red.bold('\n❌ Setup cannot continue without NetCores MCP installed.'));
+      process.exit(1);
+    }
+    
+    // Verify the installation works
+    const isValid = await this.verifyInstallation(mcpCommand);
+    if (!isValid) {
+      console.log(chalk.red.bold('\n❌ Installation verification failed.'));
+      console.log(chalk.yellow('Please try reinstalling with:'));
+      console.log(chalk.white('  npm install -g https://github.com/estcarisimo/netcores-mcp.git'));
+      process.exit(1);
+    }
     
     // Find or create config
     let configPath = this.findExistingConfig();
@@ -198,13 +346,17 @@ class SetupUtility {
       this.saveConfig(configPath, config);
       
       console.log(chalk.green.bold('\n✅ NetCores MCP successfully configured for Claude Desktop!'));
-      console.log(chalk.blue(`📍 Configuration saved to: ${configPath}`));
-      console.log(chalk.blue(`🌐 API URL: ${finalApiUrl}`));
+      console.log(chalk.blue('\n📋 Configuration Summary:'));
+      console.log(chalk.white(`  • Installation Path: ${mcpCommand}`));
+      console.log(chalk.white(`  • Config Location: ${configPath}`));
+      console.log(chalk.white(`  • API Server: ${finalApiUrl}`));
       
       console.log(chalk.yellow.bold('\n📋 Next Steps:'));
       console.log(chalk.white('1. Restart Claude Desktop if it\'s currently running'));
       console.log(chalk.white('2. NetCores tools will be available in your next conversation'));
       console.log(chalk.white('3. Try asking: "What tools do you have from NetCores?"'));
+      
+      console.log(chalk.gray('\n💡 Tip: You can run "netcores-mcp --test" to verify API connectivity'));
       
     } catch (error) {
       console.log(chalk.red.bold('\n❌ Failed to save configuration:'));

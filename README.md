@@ -131,11 +131,12 @@ netcores-mcp --setup
 ```
 
 This command will:
+- ✅ Automatically locate your NetCores MCP installation
+- ✅ Verify the installation is working correctly
 - ✅ Detect your operating system (macOS/Windows/Linux)
 - ✅ Find your Claude Desktop configuration file
-- ✅ Add NetCores MCP to the configuration
-- ✅ Test the connection to the API server
-- ✅ Validate the complete setup
+- ✅ Configure Claude Desktop with the correct absolute path
+- ✅ Show you exactly where everything was installed
 
 ### Manual Configuration
 
@@ -171,10 +172,10 @@ This uses the default NetCores server at `https://netcores.fi.uba.ar`.
 
 ```bash
 # Set custom API URL (optional)
-export NETCORES_API_URL=https://your-custom-server.com
+export NETCORES_API_URL=https://netcores.fi.uba.ar
 
 # Windows PowerShell:
-$env:NETCORES_API_URL="https://your-custom-server.com"
+$env:NETCORES_API_URL="https://netcores.fi.uba.ar"
 ```
 
 ## 📖 Usage Examples
