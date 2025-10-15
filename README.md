@@ -10,7 +10,15 @@
 
 ## 🚀 Quick Installation
 
-### Method 1: Install from GitHub (Recommended)
+### Method 1: NPM Registry (Recommended)
+
+```bash
+# Once published to npm
+npm install -g netcores-mcp
+netcores-mcp --setup
+```
+
+### Method 2: Install from GitHub 
 
 ```bash
 # Install directly from GitHub repository
@@ -23,7 +31,7 @@ netcores-mcp --setup
 netcores-mcp --test-all
 ```
 
-### Method 2: Clone and Install
+### Method 3: Clone and Install
 
 ```bash
 # Clone the repository
@@ -37,13 +45,6 @@ npm install -g .
 netcores-mcp --setup
 ```
 
-### Method 3: NPM Registry (Coming Soon)
-
-```bash
-# Once published to npm
-npm install -g netcores-mcp
-netcores-mcp --setup
-```
 
 ## ✅ Verify Installation
 
@@ -100,9 +101,6 @@ netcores-mcp --config
 
 # Show help
 netcores-mcp --help
-
-# Use custom API server
-netcores-mcp --api-url https://your-server.com
 ```
 
 ## 📋 Requirements
