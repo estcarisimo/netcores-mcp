@@ -58,6 +58,13 @@ class NetCoresTools {
               type: 'string',
               description: 'End date in YYYY-MM-DD format',
               pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+            },
+            limit: {
+              type: 'integer',
+              description: 'Maximum number of data points to display (default: 20, use 0 for all data)',
+              minimum: 0,
+              maximum: 1000,
+              default: 20
             }
           },
           required: ['asn']
@@ -91,6 +98,13 @@ class NetCoresTools {
               type: 'string',
               description: 'End date in YYYY-MM-DD format',
               pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+            },
+            limit: {
+              type: 'integer',
+              description: 'Maximum number of data points to display per ASN (default: 10, use 0 for all data)',
+              minimum: 0,
+              maximum: 1000,
+              default: 10
             }
           },
           required: ['asns']
@@ -239,7 +253,7 @@ class NetCoresTools {
    */
   async asnTrend(params) {
     try {
-      const { asn, ip_version = 'ipv4', start_date, end_date } = params;
+      const { asn, ip_version = 'ipv4', start_date, end_date, limit = 20 } = params;
       
       const options = { ipVersion: ip_version };
       if (start_date) options.startDate = start_date;
@@ -256,11 +270,27 @@ class NetCoresTools {
       
       const trendData = result.trend_data || [];
       if (trendData.length > 0) {
-        response += `**Data Points:** ${trendData.length}\n\n`;
-        response += '**Recent Trend (last 5 points):**\n';
+        response += `**Total Data Points:** ${trendData.length}\n`;
         
-        const recentData = trendData.slice(-5);
-        for (const point of recentData) {
+        // Determine how many points to display
+        let displayData;
+        if (limit === 0) {
+          // Show all data
+          displayData = trendData;
+          response += `**Showing:** All ${trendData.length} data points\n\n`;
+        } else {
+          // Show limited data (most recent points)
+          displayData = trendData.slice(-limit);
+          if (trendData.length > limit) {
+            response += `**Showing:** Most recent ${displayData.length} of ${trendData.length} data points\n`;
+            response += `*Use limit=0 to see all data*\n\n`;
+          } else {
+            response += `**Showing:** All ${displayData.length} data points\n\n`;
+          }
+        }
+        
+        response += '**Trend Data:**\n';
+        for (const point of displayData) {
           const date = point.date || 'N/A';
           const shellIdx = point.shell_index || 0;
           const maxShell = point.max_shell_index || 0;
@@ -284,7 +314,7 @@ class NetCoresTools {
    */
   async multipleAsnTrends(params) {
     try {
-      const { asns, ip_version = 'ipv4', start_date, end_date } = params;
+      const { asns, ip_version = 'ipv4', start_date, end_date, limit = 10 } = params;
       
       const options = { ipVersion: ip_version };
       if (start_date) options.startDate = start_date;
@@ -297,7 +327,15 @@ class NetCoresTools {
       response += `**IP Version:** ${result.ip_version || 'unknown'}\n`;
       
       if (result.date_range) {
-        response += `**Date Range:** ${result.date_range.start || 'N/A'} to ${result.date_range.end || 'N/A'}\n\n`;
+        response += `**Date Range:** ${result.date_range.start || 'N/A'} to ${result.date_range.end || 'N/A'}\n`;
+      }
+      
+      // Show limit information
+      if (limit === 0) {
+        response += `**Showing:** All available data points per ASN\n\n`;
+      } else {
+        response += `**Showing:** Up to ${limit} most recent data points per ASN\n`;
+        response += `*Use limit=0 to see all data*\n\n`;
       }
       
       const trendData = result.trend_data || {};
@@ -307,14 +345,37 @@ class NetCoresTools {
         response += `**ASN ${asn}:**\n`;
         
         if (dataPoints && dataPoints.length > 0) {
-          const latest = dataPoints[dataPoints.length - 1];
-          const date = latest.date || 'N/A';
-          const shellIdx = latest.shell_index || 0;
-          const maxShell = latest.max_shell_index || 0;
-          const normalized = latest.normalized_shell_index || 0.0;
+          response += `- Total data points: ${dataPoints.length}\n`;
           
-          response += `- Latest (${date}): Shell ${shellIdx}/${maxShell} (normalized: ${normalized.toFixed(3)})\n`;
-          response += `- Data points: ${dataPoints.length}\n\n`;
+          // Determine how many points to display
+          let displayData;
+          if (limit === 0) {
+            displayData = dataPoints;
+          } else {
+            displayData = dataPoints.slice(-limit);
+          }
+          
+          if (displayData.length > 1) {
+            response += `- Showing recent ${displayData.length} points:\n`;
+            for (const point of displayData) {
+              const date = point.date || 'N/A';
+              const shellIdx = point.shell_index || 0;
+              const maxShell = point.max_shell_index || 0;
+              const normalized = point.normalized_shell_index || 0.0;
+              
+              response += `  - ${date}: Shell ${shellIdx}/${maxShell} (normalized: ${normalized.toFixed(3)})\n`;
+            }
+          } else if (displayData.length === 1) {
+            const latest = displayData[0];
+            const date = latest.date || 'N/A';
+            const shellIdx = latest.shell_index || 0;
+            const maxShell = latest.max_shell_index || 0;
+            const normalized = latest.normalized_shell_index || 0.0;
+            
+            response += `- Latest (${date}): Shell ${shellIdx}/${maxShell} (normalized: ${normalized.toFixed(3)})\n`;
+          }
+          
+          response += '\n';
         } else {
           response += '- No data available\n\n';
         }
