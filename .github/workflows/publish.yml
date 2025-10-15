@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -18,7 +22,14 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        if [ -f package-lock.json ]; then
+          echo "Found package-lock.json, using npm ci"
+          npm ci
+        else
+          echo "No package-lock.json found, using npm install"
+          npm install
+        fi
 
     - name: Run tests
       run: npm test
@@ -27,7 +38,14 @@ jobs:
       run: npm run test:api
       continue-on-error: true
 
+    - name: Verify package contents
+      run: |
+        echo "Package contents that will be published:"
+        npm pack --dry-run
+        echo "Package version:"
+        node -p "require('./package.json').version"
+
     - name: Publish to NPM
-      run: npm publish
+      run: npm publish --provenance
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
