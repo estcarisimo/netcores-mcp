@@ -1,6 +1,6 @@
 {
   "name": "netcores-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for NetCores network k-core analysis - connect LLMs to ASN relationship data",
   "main": "src/server.js",
   "bin": {
