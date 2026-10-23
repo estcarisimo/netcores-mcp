@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use NetCores MCP in your research, please cite the Computer Communications 2019 paper below."
+type: software
+title: "NetCores MCP"
+authors:
+ - family-names: Carisimo
+   given-names: Esteban
+   email: esteban.carisimo@northwestern.edu
+   affiliation: Northwestern University
+repository-code: https://github.com/estcarisimo/netcores-mcp
+url: https://netcores.fi.uba.ar
+license: MIT
+version: 1.0.1
+date-released: "2025-10-15"
+preferred-citation:
+ type: article
+ title: "Studying the evolution of content providers in IPv4 and IPv6 internet cores"
+ authors:
+  - family-names: Carisimo
+    given-names: Esteban
+  - family-names: Selmo
+    given-names: Carlos
+  - family-names: Alvarez-Hamelin
+    given-names: J. Ignacio
+  - family-names: Dhamdhere
+    given-names: Amogh
+ journal: "Computer Communications"
+ volume: 145
+ start: 54
+ end: 65
+ year: 2019
+ issn: "0140-3664"
+ doi: 10.1016/j.comcom.2019.05.022

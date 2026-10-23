@@ -1,6 +1,7 @@
 {
   "name": "netcores-mcp",
   "version": "1.0.1",
+  "mcpName": "io.github.estcarisimo/netcores-mcp",
   "description": "MCP server for NetCores network k-core analysis - connect LLMs to ASN relationship data",
   "main": "src/server.js",
   "bin": {
@@ -39,7 +40,7 @@
     "url": "https://netcores.fi.uba.ar"
   },
   "license": "MIT",
-  "homepage": "https://netcores.fi.uba.ar/mcp-docs",
+  "homepage": "https://github.com/estcarisimo/netcores-mcp",
   "repository": {
     "type": "git",
     "url": "https://github.com/estcarisimo/netcores-mcp.git"
