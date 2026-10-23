@@ -6,14 +6,15 @@
 
 **NetCores MCP** is a Model Context Protocol (MCP) server that provides LLMs with powerful network analysis capabilities through the NetCores k-core decomposition API. Connect Claude Desktop to real-time AS (Autonomous System) relationship data and Internet topology analysis.
 
-> 🌐 **Live Demo**: [netcores.fi.uba.ar](https://netcores.fi.uba.ar) | 📖 **Full Docs**: [MCP Integration Guide](http://https://netcores.fi.uba.ar/mcp-docs)
+> 🌐 **Live Demo**: [netcores.fi.uba.ar](https://netcores.fi.uba.ar) | 📖 **Full Docs**: [MCP Integration Guide](https://netcores.fi.uba.ar/mcp-examples)
 
 ## 🚀 Quick Installation
 
 ### Method 1: NPM Registry (Recommended)
 
+`netcores-mcp` is published on npm (current release 1.0.1).
+
 ```bash
-# Once published to npm
 npm install -g netcores-mcp
 netcores-mcp --setup
 ```

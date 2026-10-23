@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.estcarisimo/netcores-mcp",
+  "title": "NetCores MCP",
+  "description": "MCP server for NetCores network k-core analysis - connect LLMs to ASN relationship data",
+  "repository": {
+    "url": "https://github.com/estcarisimo/netcores-mcp",
+    "source": "github",
+    "id": "1073272433"
+  },
+  "version": "1.0.1",
+  "websiteUrl": "https://netcores.fi.uba.ar",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "netcores-mcp",
+      "version": "1.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "NETCORES_API_URL",
+          "description": "NetCores API base URL. Defaults to https://netcores.fi.uba.ar.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

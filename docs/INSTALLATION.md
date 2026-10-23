@@ -115,7 +115,7 @@ netcores-mcp --version
 
 ### Method 3: NPM Registry
 
-**Coming soon - Once published to npm registry**
+`netcores-mcp` is published on npm.
 
 ```bash
 # Direct installation from npm
@@ -441,7 +441,7 @@ rm -rf $(npm root -g)/netcores-mcp
 
 ### Getting Help
 
-1. **Check documentation**: https://netcores.fi.uba.ar/mcp-docs
+1. **Check documentation**: https://netcores.fi.uba.ar/mcp-examples
 2. **API status**: https://netcores.fi.uba.ar/api/health
 3. **Run diagnostics**: `netcores-mcp --test-all`
 
@@ -467,7 +467,7 @@ npm --version
 
 - **NetCores Web Interface**: https://netcores.fi.uba.ar
 - **API Documentation**: https://netcores.fi.uba.ar/api-docs
-- **MCP Documentation**: https://netcores.fi.uba.ar/mcp-docs
+- **MCP Documentation**: https://netcores.fi.uba.ar/mcp-examples
 - **CAIDA AS Relationships**: https://www.caida.org/catalog/datasets/as-relationships/
 
 ---

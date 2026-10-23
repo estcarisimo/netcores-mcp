@@ -82,7 +82,7 @@ jobs:
           
           ## 🔗 Resources
           - 🌐 [NetCores Web App](https://netcores.fi.uba.ar)
-          - 📖 [Documentation](https://netcores.fi.uba.ar/mcp-docs)
+          - 📖 [Documentation](https://netcores.fi.uba.ar/mcp-examples)
           - 🐛 [Report Issues](https://github.com/estcarisimo/netcores-mcp/issues)
         files: |
           ${{ steps.package.outputs.tarball }}
